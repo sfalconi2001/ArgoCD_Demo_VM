@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: weatherly-frontend:latest
+        image: sfalconi2001/weatherly-frontend:latest
         env:
         - name: NEXT_PUBLIC_API_KEY
           value: "9686ece7b4a67012adf7510c01c75dd2"
