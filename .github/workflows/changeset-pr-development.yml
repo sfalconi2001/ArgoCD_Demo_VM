@@ -3,8 +3,6 @@ name: Generate Changeset PR (Development)
 on:
     push:
         branches: ["main"]
-        paths:
-            - ".changeset/**"
 
 permissions:
     contents: write
@@ -30,6 +28,5 @@ jobs:
               uses: changesets/action@v1
               with:
                   publish: "false"
-                  version: "true" # <-- antes lo tenías en false = ERROR
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
