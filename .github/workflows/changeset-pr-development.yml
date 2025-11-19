@@ -15,7 +15,8 @@ jobs:
     version-pr:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
@@ -23,11 +24,12 @@ jobs:
                   node-version: "20"
 
             - name: Install dependencies
-              run: cd frontend && npm install
+              run: npm install
+              working-directory: frontend
 
             - name: Run Changesets Action
-              uses: changesets/action@v1
+              uses: changesets/action@v2
               with:
                   publish: "false"
               env:
-                  GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CHANGESETS }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
