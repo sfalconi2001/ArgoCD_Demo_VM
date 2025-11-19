@@ -28,7 +28,7 @@ jobs:
               working-directory: frontend
 
             - name: Run Changesets Action
-              uses: changesets/action@v2
+              uses: changesets/action@v1
               with:
                   publish: "false"
               env:
