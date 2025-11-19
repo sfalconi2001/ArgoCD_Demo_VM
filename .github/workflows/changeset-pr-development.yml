@@ -28,8 +28,9 @@ jobs:
               working-directory: frontend
 
             - name: Run Changesets Action
-              uses: changesets/action@v1 #
+              uses: changesets/action@v1
               with:
                   publish: "false"
+                  cwd: frontend
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
