@@ -1,12 +1,10 @@
-name: Generate Changeset PR (Frontend)
+name: Generate Changeset PR (Global)
 
 on:
-    # Corre cuando cambia algo del frontend o del changeset global
     push:
         branches:
             - main
         paths:
-            - "frontend/**"
             - ".changeset/**"
 
 permissions:
@@ -29,11 +27,7 @@ jobs:
             - name: Install ROOT dependencies
               run: npm install
 
-            - name: Install Frontend dependencies
-              run: npm install
-              working-directory: ./frontend
-
-            - name: Run Changesets Action (root)
+            - name: Run Changesets Action (global)
               uses: changesets/action@v1
               with:
                   publish: "false"
