@@ -1,0 +1,67 @@
+name: Debug Changeset Workflow
+
+on:
+    push:
+        paths:
+            - "frontend/.changeset/**"
+        branches:
+            - main
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    debug-changeset:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v3
+
+            # DEBUG 1: Show repo structure
+            - name: Show root directory
+              run: |
+                  echo "=== ROOT DIRECTORY ==="
+                  ls -la
+                  echo "======================"
+                  tree -L 4 || true
+
+            # DEBUG 2: Show frontend structure
+            - name: Show frontend directory
+              run: |
+                  echo "=== FRONTEND DIRECTORY ==="
+                  ls -la frontend
+                  echo "=========================="
+                  tree frontend -L 4 || true
+
+            # DEBUG 3: Check .changeset folder
+            - name: Check .changeset folder
+              run: |
+                  echo "=== CHECK .CHANGESET ==="
+                  if [ -d "frontend/.changeset" ]; then
+                    echo ".changeset EXISTS!"
+                    ls -la frontend/.changeset
+                  else
+                    echo "ERROR: .changeset DOES NOT EXIST"
+                  fi
+                  echo "=========================="
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: "20"
+
+            - name: Install frontend deps
+              run: npm install
+              working-directory: frontend
+
+            # DEBUG 4: Run Changesets
+            - name: Run Changesets Action
+              uses: changesets/action@v1
+              with:
+                  publish: "false"
+                  version: "false"
+                  cwd: frontend
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
