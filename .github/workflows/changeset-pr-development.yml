@@ -28,8 +28,9 @@ jobs:
               working-directory: frontend
 
             - name: Run Changesets Action
-              uses: changesets/action@v1
+              uses: changesets/action@v2
               with:
                   publish: "false"
+                  allow-empty-pull-request: "true"
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
