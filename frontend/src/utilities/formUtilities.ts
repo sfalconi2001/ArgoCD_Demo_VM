@@ -7,7 +7,7 @@ export function handleClear(
   setCity: (val: string) => void,
   inputRef: MutableRefObject<HTMLInputElement | null>,
   dispatch: React.Dispatch<WeatherAction>
-): void {
+) {
   e.preventDefault();
   setCity("");
   inputRef.current?.focus();
@@ -16,15 +16,17 @@ export function handleClear(
 
 export const handleSearch =
   (dispatch: React.Dispatch<WeatherAction>) => async (city: string) => {
+    if (!city.trim()) return;
+
     dispatch({ type: "FETCH_START" });
+
     try {
       const data = await fetchWeatherList(city);
       dispatch({ type: "FETCH_SUCCESS", payload: data });
     } catch (error) {
-      if (error instanceof Error) {
-        dispatch({ type: "FETCH_FAILURE", payload: error.message });
-      } else {
-        dispatch({ type: "FETCH_FAILURE", payload: "Unknown error" });
-      }
+      dispatch({
+        type: "FETCH_FAILURE",
+        payload: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   };

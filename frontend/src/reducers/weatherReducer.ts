@@ -5,7 +5,7 @@ export interface WeatherState {
   loading: boolean;
   error: string;
   selected: Set<string>;
-  savedWeathers: WeatherData[]; // ← agregado
+  savedWeathers: WeatherData[];
 }
 
 export type WeatherAction =
@@ -31,7 +31,6 @@ export const weatherReducer = (
         weather: [],
         selected: new Set(),
       };
-
     case "FETCH_SUCCESS":
       return {
         ...state,
@@ -40,46 +39,19 @@ export const weatherReducer = (
         error: "",
         selected: new Set(),
       };
-
     case "FETCH_FAILURE":
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
-
+      return { ...state, loading: false, error: action.payload };
     case "CLEAR_WEATHER":
-      return {
-        ...state,
-        weather: [],
-        error: "",
-        selected: new Set(),
-      };
-
+      return { ...state, weather: [], error: "", selected: new Set() };
     case "TOGGLE_SELECT":
       const newSelected = new Set(state.selected);
-      if (newSelected.has(action.payload)) {
-        newSelected.delete(action.payload);
-      } else {
-        newSelected.add(action.payload);
-      }
-      return {
-        ...state,
-        selected: newSelected,
-      };
-
+      if (newSelected.has(action.payload)) newSelected.delete(action.payload);
+      else newSelected.add(action.payload);
+      return { ...state, selected: newSelected };
     case "CLEAR_SELECTION":
-      return {
-        ...state,
-        selected: new Set(),
-      };
-
+      return { ...state, selected: new Set() };
     case "SET_SAVED_WEATHERS":
-      return {
-        ...state,
-        savedWeathers: action.payload,
-      };
-
+      return { ...state, savedWeathers: action.payload };
     case "DELETE_SAVED_WEATHER":
       return {
         ...state,
@@ -87,7 +59,6 @@ export const weatherReducer = (
           (w) => w._id !== action.payload
         ),
       };
-
     default:
       return state;
   }
