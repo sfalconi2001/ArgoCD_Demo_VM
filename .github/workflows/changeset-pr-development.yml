@@ -28,5 +28,6 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: "false"
+          version: "false"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
