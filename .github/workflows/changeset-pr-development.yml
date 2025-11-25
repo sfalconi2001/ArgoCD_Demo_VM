@@ -24,9 +24,18 @@ jobs:
       - name: Install root + workspaces
         run: npm install
 
+<<<<<<< HEAD
       - name: Run Changesets
         uses: changesets/action@v1
         with:
           publish: "false"
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CHANGESETS }}
+=======
+            - name: Run Changesets
+              uses: changesets/action@v1
+              with:
+                  publish: "false"
+              env:
+                  GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CHANGESETS }}
+>>>>>>> efcd68d15f7c1fbb9839072d5bca1106f55a4963
