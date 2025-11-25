@@ -18,7 +18,6 @@ const initialState = {
   savedWeathers: [],
 };
 
-// --- Types ---
 type WeatherStatusProps = {
   loading: boolean;
   error: string;
@@ -30,7 +29,6 @@ type Notification = {
   type: "success" | "error";
 };
 
-// --- Status Component ---
 function WeatherStatus({ loading, error, hasResults }: WeatherStatusProps) {
   if (loading)
     return <p className="loading-message">Loading weather data...</p>;
@@ -40,7 +38,6 @@ function WeatherStatus({ loading, error, hasResults }: WeatherStatusProps) {
   return null;
 }
 
-// --- 🎉 Notification Component ---
 function NotificationBox({
   notification,
   onClose,
@@ -53,7 +50,6 @@ function NotificationBox({
       ? "bg-green-600 text-white"
       : "bg-red-600 text-white";
 
-  // auto close after 3s
   useEffect(() => {
     const timer = setTimeout(onClose, 3000);
     return () => clearTimeout(timer);
@@ -76,7 +72,6 @@ function NotificationBox({
   );
 }
 
-// --- Main Page ---
 export default function Home() {
   const [state, dispatch] = useReducer(weatherReducer, initialState);
   const [selectedWeather, setSelectedWeather] = useState<WeatherData[]>([]);
