@@ -29,5 +29,6 @@ jobs:
         with:
           publish: "false"
           version: "false"
+          failOnNoChangesets: "false"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
