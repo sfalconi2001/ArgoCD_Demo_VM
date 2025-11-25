@@ -1,32 +1,32 @@
 name: Generate Changeset PR (Development)
 
 on:
-    push:
-        branches: ["main"]
+  push:
+    branches: ["main"]
 
 permissions:
-    contents: write
-    pull-requests: write
+  contents: write
+  pull-requests: write
 
 jobs:
-    version-pr:
-        runs-on: ubuntu-latest
+  version-pr:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: "20"
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
 
-            - name: Install root + workspaces
-              run: npm install
+      - name: Install root + workspaces
+        run: npm install
 
-            - name: Run Changesets
-              uses: changesets/action@v1
-              with:
-                  publish: "false"
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Changesets
+        uses: changesets/action@v1
+        with:
+          publish: "false"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_CHANGESETS }}
