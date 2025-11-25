@@ -75,7 +75,7 @@ export default function Home() {
       )}
 
       {!state.loading && !state.error && state.weather.length === 0 && (
-        <p className="loading-message">No results found.</p>
+        <p className="loading-message fade-in">No results found.</p>
       )}
 
       {state.weather.length > 0 && (
