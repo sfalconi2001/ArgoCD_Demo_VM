@@ -3,7 +3,7 @@ name: Deploy to Development Environment
 on:
   push:
     branches: ["main"]
-    paths: 
+    paths:
       - "frontend/**"
 
 permissions:
@@ -52,7 +52,8 @@ jobs:
 
       - name: Build frontend docker image
         run: |
-          IMAGE_URI=${{ secrets.FRONTEND_IMAGE }}:${{ env.FRONTEND_VERSION }}
+          DEV_TAG=${{ env.FRONTEND_VERSION }}-dev+${{ github.sha }}
+          IMAGE_URI=${{ secrets.FRONTEND_IMAGE }}:$DEV_TAG
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
           docker build \

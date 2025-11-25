@@ -1,0 +1,72 @@
+name: Deploy to Staging Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to deploy to Staging"
+        required: false
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  build_and_deploy_qa:
+    runs-on: ubuntu-latest
+    environment: QA
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Set Version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            echo "Using manual input version: $VERSION"
+          else
+            VERSION=$(node -p "require('./frontend/package.json').version")
+            echo "No input version provided. Using package.json version: $VERSION"
+          fi
+
+          echo "FRONTEND_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Update ArgoCD QA patch with new image
+        env:
+          FRONTEND_VERSION: ${{ env.FRONTEND_VERSION }}
+        run: |
+          IMAGE_URI="${{ secrets.FRONTEND_IMAGE }}:${{ env.FRONTEND_VERSION }}"
+          echo "Using image: $IMAGE_URI"
+          docker pull "$IMAGE_URI" || (echo "ERROR: image not found: $IMAGE_URI" && exit 1)
+          env IMAGE_URI="$IMAGE_URI" envsubst < k8s/overlays/qa/frontend-image-patch.yaml \
+            > k8s/overlays/qa/frontend-image-patch.tmp.yaml
+          mv k8s/overlays/qa/frontend-image-patch.tmp.yaml \
+            k8s/overlays/qa/frontend-image-patch.yaml
+          git --no-pager diff -- k8s/overlays/qa/frontend-image-patch.yaml || true
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          git add k8s/overlays/qa/frontend-image-patch.yaml
+          git commit -m "Update QA image to ${IMAGE_URI}" || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref_name }}
+
+      - name: Ensure clean working directory
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "ERROR: Working directory is not clean after updating image patch."
+            git status
+            exit 1
+          else
+            echo "Working directory is clean."
+          fi
