@@ -52,4 +52,5 @@ jobs:
 
           git add k8s/overlays/dev/kustomization.yaml
           git commit -m "chore(dev): update backend image tag to ${VERSION}-${{ github.sha }} [skip ci]" || echo "No changes to commit"
+          git pull --rebase origin main
           git push
