@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: sfalconi2001/weatherly-frontend:PLACEHOLDER_TAG
+          image: sfalconi2001/weatherly-frontend
           ports:
             - containerPort: 3000

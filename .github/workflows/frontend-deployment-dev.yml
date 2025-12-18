@@ -30,7 +30,6 @@ jobs:
 
       - name: Read version from frontend/package.json
         id: get-version
-        shell: bash
         run: |
           VERSION=$(node -p "require('./package.json').version")
           echo "FRONTEND_VERSION=$VERSION" >> $GITHUB_ENV
@@ -52,8 +51,8 @@ jobs:
 
       - name: Build frontend docker image
         run: |
-          DEV_TAG=${{ env.FRONTEND_VERSION }}-dev-${{ github.sha }}
-          IMAGE_URI=${{ secrets.FRONTEND_IMAGE }}:$DEV_TAG
+          IMAGE_TAG=${{ env.FRONTEND_VERSION }}-dev-${{ github.sha }}
+          IMAGE_URI=${{ secrets.FRONTEND_IMAGE }}:$IMAGE_TAG
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
           docker build \
@@ -62,7 +61,7 @@ jobs:
             --build-arg NEXT_PUBLIC_API_KEY=${{ secrets.NEXT_PUBLIC_API_KEY }} \
             --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
 
-      - name: Push docker image
+      - name: Push frontend docker image
         run: docker push $IMAGE_URI
 
       - name: Zip build output
@@ -86,9 +85,9 @@ jobs:
 
       - name: Update ArgoCD patch with new image
         run: |
-          IMAGE_URI=${{ secrets.FRONTEND_IMAGE }}:${{ env.FRONTEND_VERSION }}
+          IMAGE_URI=${{ secrets.FRONTEND_IMAGE }}:${{ env.FRONTEND_VERSION }}-dev-${{ github.sha }}
 
-          env IMAGE_URI="$IMAGE_URI" envsubst < k8s/overlays/dev/frontend-image-patch.yaml \
+          env IMAGE_URI=$IMAGE_URI envsubst < k8s/overlays/dev/frontend-image-patch.yaml \
             > k8s/overlays/dev/frontend-image-patch.tmp.yaml
 
           mv k8s/overlays/dev/frontend-image-patch.tmp.yaml \
@@ -99,6 +98,5 @@ jobs:
 
           git add k8s/overlays/dev/frontend-image-patch.yaml
 
-          # Solo comitea si hay cambios reales
           git commit -m "chore: update frontend image to $IMAGE_URI [skip ci]" || echo "No changes to commit"
           git push origin main || echo "No changes to push"
