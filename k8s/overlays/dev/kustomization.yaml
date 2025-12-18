@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - ../../base
 
-patchesStrategicMerge:
-  - frontend-image-patch.yaml
+images:
+  - name: sfalconi2001/weatherly-frontend
+    newTag: latest
