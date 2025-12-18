@@ -34,7 +34,7 @@ function WeatherStatus({ loading, error, hasResults }: WeatherStatusProps) {
     return <p className="loading-message">Loading weather data...</p>;
   if (error) return <p className="error-message">{error}</p>;
   if (!loading && !error && !hasResults)
-    return <p className="loading-message">No results found.</p>;
+    return <p className="loading-message">No results were found.</p>;
   return null;
 }
 
