@@ -95,7 +95,7 @@ export default function Home() {
       {state.loading && <p>Loading the weather data...</p>}
       {state.error && <p className="text-red-600">{state.error}</p>}
       {!state.loading && !state.error && state.weather.length === 0 && (
-        <p>No results found.</p>
+        <p>No results were found.</p>
       )}
 
       {/* Lista de resultados */}
