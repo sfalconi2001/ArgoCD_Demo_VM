@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: sfalconi2001/weatherly-frontend:1.0.0-9f0fb8bcf4f2d1299c4b5b48c0a72cb221d69c35
+          image: sfalconi2001/weatherly-frontend:latest
           ports:
             - containerPort: 3000
