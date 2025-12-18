@@ -1,20 +1,19 @@
 name: Build and publish Frontend Dev Docker Image
 
 on:
-  push:
+  pull_request:
     branches: ["main"]
+    types: [closed, synchronize, reopened]
     paths:
       - "frontend/**"
-      - "k8s/overlays/dev/frontend-image-patch.yaml"
-      - ".github/workflows/build-push-frontend-dev.yml"
-      - "k8s/base/frontend-deployment.yaml"
       - "k8s/overlays/dev/kustomization.yaml"
-
+      - github/workflows/build-push-frontend-dev.yml
 permissions:
   contents: write
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -43,13 +42,14 @@ jobs:
 
       - name: Update frontend deployment
         run: |
-          sed -i "s|image: .*|image: $IMAGE|" k8s/base/frontend-deployment.yaml
+          sed -i "s|newTag: .*|newTag: ${VERSION}-${{ github.sha }}|" \
+            k8s/overlays/dev/kustomization.yaml
 
       - name: Commit image update
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add k8s/base/frontend-deployment.yaml
-          git commit -m "chore(dev): update frontend image to $IMAGE [skip ci]"
+          git add k8s/overlays/dev/kustomization.yaml
+          git commit -m "chore(dev): update frontend image tag to ${VERSION}-${{ github.sha }} [skip ci]"
           git push
