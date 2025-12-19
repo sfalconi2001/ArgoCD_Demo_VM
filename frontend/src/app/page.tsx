@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useReducer, useState, useEffect, useCallback } from "react";
+import { useReducer, useState, useCallback } from "react";
 import { weatherReducer } from "@/reducers/weatherReducer";
 import { WeatherData, saveWeatherResult } from "@/services/weatherService";
 import { handleSearch } from "@/utilities/formUtilities";
@@ -17,53 +17,43 @@ export default function Home() {
     weather: [],
     loading: false,
     error: "",
-    selected: new Set<string>(),
+    selected: new Set<string>(), // ya NO se usa aquí, pero no rompe nada
     savedWeathers: getWeathersFromLocalStorage(),
   });
 
-  // Array de objetos seleccionados
+  // ✅ ESTA es la única fuente de verdad para el save
   const [selectedWeather, setSelectedWeather] = useState<WeatherData[]>([]);
   const [notification, setNotification] = useState<string | null>(null);
 
   const search = handleSearch(dispatch);
 
-  // Sincronizar selectedWeather con state.selected
-  useEffect(() => {
-    const selectedIds = state.selected;
-    const selectedData = state.weather.filter(
-      (w) => w._id && selectedIds.has(w._id)
-    );
-    setSelectedWeather(selectedData);
-  }, [state.selected, state.weather]);
+  // ✅ WeatherList nos entrega los objetos seleccionados directamente
+  const handleSelectionChange = useCallback((selected: WeatherData[]) => {
+    setSelectedWeather(selected);
+  }, []);
 
+  // ✅ Guardado REAL (ya no llega vacío)
   const saveSelectedWeather = async () => {
     if (selectedWeather.length === 0) return;
 
     try {
-      await Promise.all(selectedWeather.map((w) => saveWeatherResult(w)));
+      await Promise.all(
+        selectedWeather.map((weather) => saveWeatherResult(weather))
+      );
+
       setNotification("Weather data saved!");
 
       const updatedSaved = [...state.savedWeathers, ...selectedWeather];
       dispatch({ type: "SET_SAVED_WEATHERS", payload: updatedSaved });
       saveWeathersToLocalStorage(updatedSaved);
 
-      // Limpiar selección
-      dispatch({ type: "CLEAR_SELECTION" });
-    } catch (err) {
+      // Limpieza visual
+      setSelectedWeather([]);
+    } catch (error) {
+      console.error(error);
       setNotification("Error saving weather data");
-      console.error(err);
     }
   };
-
-  const handleSelectionChange = useCallback((selected: WeatherData[]) => {
-    // Limpiamos la selección anterior
-    dispatch({ type: "CLEAR_SELECTION" });
-
-    // Activamos los seleccionados
-    selected.forEach((w) => {
-      if (w._id) dispatch({ type: "TOGGLE_SELECT", payload: w._id });
-    });
-  }, []);
 
   return (
     <main className="flex flex-col items-center gap-6 p-6 max-w-2xl mx-auto">
@@ -98,7 +88,7 @@ export default function Home() {
         <p>No results were found.</p>
       )}
 
-      {/* Lista de resultados */}
+      {/* Lista */}
       {state.weather.length > 0 && (
         <WeatherList
           weather={state.weather}
