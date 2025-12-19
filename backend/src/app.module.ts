@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { WeatherModule } from './weathers/weather.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
+// Main application module
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
