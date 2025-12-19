@@ -6,7 +6,7 @@ resources:
 
 images:
   - name: sfalconi2001/weatherly-frontend
-    newTag: 1.0.0-ce703d2ba1b47d624981e9d38bb7a304c5466371
+    newTag: 1.0.0-d8a8065c3e758d0cf28c40e72ee0b4724e2bd8d0
 
   - name: sfalconi2001/weatherly-backend
     newTag: 2.0.0-ce703d2ba1b47d624981e9d38bb7a304c5466371
